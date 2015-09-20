@@ -27,7 +27,7 @@ import random
 import sys
 import wx
 
-REFRESH_INTERVAL_MS = 90
+REFRESH_INTERVAL_MS = 9
 
 # The recommended way to use wx with mpl is with the WXAgg
 # backend. 
