@@ -6,21 +6,8 @@ http://stackoverflow.com/questions/1093598/pyserial-how-to-read-last-line-sent-f
 from threading import Thread
 import time
 import serial
-"""
-last_received = ''
-def receiving(ser):
-    global last_received
-    buffer = ''
-    while True:
-        buffer = buffer + ser.read(ser.inWaiting())
-        if '\n' in buffer:
-            lines = buffer.split('\n') # Guaranteed to have at least 2 entries
-            last_received = lines[-2]
-            #If the Arduino sends lots of empty lines, you'll lose the
-            #last filled line, so you could make the above statement conditional
-            #like so: if lines[-2]: last_received = lines[-2]
-            buffer = lines[-1]
-"""
+file_name=str(time.time())+'.log'
+f = open(str(file_name), "w")
 
 class SerialData(object):
     def __init__(self, init=50):
@@ -36,32 +23,22 @@ class SerialData(object):
                 rtscts=0,
                 interCharTimeout=None
             )
-            file_name=str(time.time())+'.log'
-	        f = open(str(file_name), "w")
+            
         except serial.serialutil.SerialException:
             #no serial connection
             self.ser = None
-    #   else:
-    #       Thread(target=receiving, args=(self.ser,)).start()
-        
+    
     def next(self):
         if not self.ser:
             return 100 #return anything so we can test when Arduino isn't connected
-        #return a float value or try a few times until we get one
-    """ for i in range(40):
-            raw_line = last_received
-            try:
-                return float(raw_line.strip())
-            except ValueError:
-                print 'bogus data',raw_line
-                time.sleep(.005)"""
-            while True:                                        # 
+        while True:                                        # 
             if (self.ser.inWaiting()>0):
                 myData = self.ser.readline().strip()
 	        timestamp = datetime.datetime.now()
-	        print >>f, timestamp,"\t",int(time.time()),"\t",myData
-            return myData
-        return 0.
+	        if(mydata<'1.5')                # Filtering unwanted values
+	            print >>f, timestamp,"\t",int(time.time()),"\t",myData
+            	    return myData
+            	    
     def __del__(self):
         if self.ser:
             self.ser.close()
