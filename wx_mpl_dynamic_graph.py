@@ -290,8 +290,11 @@ class GraphFrame(wx.Frame):
         # (to respond to scale modifications, grid change, etc.)
         #
         if not self.paused:
-            self.data.append(self.datagen.next())
-        
+            arr=[]
+            for l in range(10):
+	            arr.append(self.datagen.next())                   
+	            self.data.append(float(sum(arr)/len(arr)))         #Plots the average value of 10 readings but writes all 10 into the file         
+	            
         self.draw_plot()
     
     def on_exit(self, event):
