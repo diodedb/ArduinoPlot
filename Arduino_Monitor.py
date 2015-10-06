@@ -6,8 +6,6 @@ http://stackoverflow.com/questions/1093598/pyserial-how-to-read-last-line-sent-f
 from threading import Thread
 import time
 import serial
-file_name=str(time.time())+'.log'
-f = open(str(file_name), "w")
 
 class SerialData(object):
     def __init__(self, init=50):
@@ -33,16 +31,13 @@ class SerialData(object):
             return 100 #return anything so we can test when Arduino isn't connected
         while True:                                        # 
             if (self.ser.inWaiting()>0):
-                myData = self.ser.readline().strip()
-	        timestamp = datetime.datetime.now()
-	        if(mydata<'1.5')                # Filtering unwanted values
-	            print >>f, timestamp,"\t",int(time.time()),"\t",myData
-            	    return myData
+                myData = float(self.ser.readline().strip())
+	        if(mydata<1.2)                # Filtering unwanted values
+	            return myData
             	    
     def __del__(self):
         if self.ser:
             self.ser.close()
-            f.close()
 
 if __name__=='__main__':
     s = SerialData()
