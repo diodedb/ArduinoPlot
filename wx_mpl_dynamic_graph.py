@@ -2,6 +2,7 @@
 GP:
 Changed datasource, title, and refresh interval to use
 as a poor man's Arduino oscilliscope.
+<<<<<<< HEAD
 
 This demo demonstrates how to draw a dynamic mpl (matplotlib) 
 plot in a wxPython application.
@@ -20,6 +21,9 @@ affect the plot.
 Eli Bendersky (eliben@gmail.com)
 License: this code is in the public domain
 Last modified: 31.07.2008
+
+=======
+
 """
 import os
 import pprint
@@ -27,7 +31,8 @@ import random
 import sys
 import wx
 
-REFRESH_INTERVAL_MS = 9
+REFRESH_INTERVAL_MS = 100
+
 
 # The recommended way to use wx with mpl is with the WXAgg
 # backend. 
@@ -42,6 +47,12 @@ import numpy as np
 import pylab
 #Data comes from here
 from Arduino_Monitor import SerialData as DataGen
+
+import datetime
+import time
+
+file_name=str(time.time())+'.log'
+f = open(str(file_name), "w")
 
 
 class BoundControlBox(wx.Panel):
@@ -101,7 +112,7 @@ class GraphFrame(wx.Frame):
         wx.Frame.__init__(self, None, -1, self.title)
         
         self.datagen = DataGen()
-        self.data = [self.datagen.next()]
+        self.data = []
         self.paused = False
         
         self.create_menu()
@@ -290,11 +301,14 @@ class GraphFrame(wx.Frame):
         # (to respond to scale modifications, grid change, etc.)
         #
         if not self.paused:
-            self.data.append(self.datagen.next())
-        
+            Data=float(self.datagen.next())
+            self.data.append(Data)
+            timestamp = datetime.datetime.now()
+            print >>f,timestamp,"\t",int(time.time()),"\t",Data                 
         self.draw_plot()
     
     def on_exit(self, event):
+        f.close()
         self.Destroy()
     
     def flash_status_message(self, msg, flash_len_ms=1500):
